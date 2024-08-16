@@ -19,12 +19,7 @@ require('../dbs/init.mongodb');
 
 
 //init routing
-app.get('/', (req, res) => {
-    return res.status(200).json({
-        message: "Hello world!",
-        metadata: "Fan TipsJS".repeat(100000)
-    })
-})
+app.use('/', require('../routes/index'));
 
 
 //handle errors
