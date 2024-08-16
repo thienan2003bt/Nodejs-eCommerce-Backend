@@ -14,6 +14,7 @@ app.use(helmet())
 app.use(compression())
 
 //init db
+require('../dbs/init.mongodb');
 
 
 
