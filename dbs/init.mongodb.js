@@ -1,8 +1,9 @@
 'use strict'
 const mongoose = require('mongoose');
 const { countConnect, checkOverloadedConnect } = require('../helpers/check.connect')
+const { db: { host, name, port } } = require('../configs/config.mongodb');
 
-const connectString = `mongodb://localhost:27017/shopDEV`
+const connectString = `mongodb://${host}:${port}/${name}`
 const MAX_POOL_SIZE = 50
 
 class Database {
