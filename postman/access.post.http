@@ -4,14 +4,10 @@
 # POST {{url_dev}}/shop/signup
 POST http://localhost:3055/v1/api/shop/signup
 Content-Type: application/json
+x-api-key: 627bb0adf05d45e3d86721543656e9277790d5b516886013c60873478bc4df2c713341eee18efec732a70b1a8c9ac74c387eb56ea2cdf57a7380ae4c103985c3
 
-# {
-#     "name": "Tips Javascript",
-#     "email": "shoptipsjs@gmail.com",
-#     "password": "123456"
-# }
 {
     "name": "Tips Javascript",
-    "email": "shoptipsjs@gmail.com",
+    "email": "shoptipsjss@gmail.com",
     "password": "123456"
 }
