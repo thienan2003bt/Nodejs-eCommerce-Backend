@@ -8,6 +8,7 @@ const KeyTokenService = require('../services/keyToken.service');
 
 const createTokenPair = require('../auth/auth.utils');
 const { getIntoData } = require('../utils');
+const { BadRequestError } = require('../core/error.response');
 
 const SHOP_ROLES = {
     SHOP: 'SHOP',
@@ -23,11 +24,7 @@ class AccessService {
         try {
             const holderShop = await shopModel.findOne({ email }).lean();
             if (holderShop) {
-                return {
-                    code: 'xxxx',
-                    message: 'Shop already existed!',
-                    status: 'failed'
-                }
+                throw new BadRequestError('Error: Shop already registered!')
             }
 
             const hashedPassword = bcrypt.hashSync(password, 10)
@@ -52,10 +49,7 @@ class AccessService {
                 )
 
                 if (!publicKeyString) {
-                    return {
-                        code: 'xxxx',
-                        message: 'public key string error'
-                    }
+                    throw new BadRequestError('Error: Public key string');
                 }
 
                 const tokens = await createTokenPair({
