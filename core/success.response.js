@@ -1,7 +1,7 @@
 'use strict';
 const STATUS_CODE = {
-    OK: '200',
-    CREATED: '201'
+    OK: 200,
+    CREATED: 201,
 }
 
 const REASON_STATUS_CODE = {

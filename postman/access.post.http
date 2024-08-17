@@ -1,13 +1,23 @@
 @url_dev = http://localhost:3055/v1/api
 
 ### signup
-# POST {{url_dev}}/shop/signup
-POST http://localhost:3055/v1/api/shop/signup
+POST {{url_dev}}/shop/signup
 Content-Type: application/json
-x-api-key: 627bb0adf05d45e3d86721543656e9277790d5b516886013c60873478bc4df2c713341eee18efec732a70b1a8c9ac74c387eb56ea2cdf57a7380ae4c103985c3
+x-api-key: 215a4bbdbe5bad3e15c46ac09d7559c616df12749ffb1f4f3c5d91cc096187533c0acf3818052d1e46cbbd587ab22aaa8b3f6c7d163c99b6530c8816d3c7b16e
 
 {
     "name": "Tips Javascript",
-    "email": "shoptipsjs10@gmail.com",
+    "email": "shoptipsjs@gmail.com",
     "password": "123456"
+}
+
+### login
+POST {{url_dev}}/shop/login
+Content-Type: application/json
+x-api-key: 215a4bbdbe5bad3e15c46ac09d7559c616df12749ffb1f4f3c5d91cc096187533c0acf3818052d1e46cbbd587ab22aaa8b3f6c7d163c99b6530c8816d3c7b16e
+
+{
+    "email": "shoptipsjs@gmail.com",
+    "password": "123456",
+    "refreshToken": "fake-refresh-token"
 }

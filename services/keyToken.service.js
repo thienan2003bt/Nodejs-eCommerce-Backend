@@ -16,6 +16,20 @@ class KeyTokenService {
             return error;
         }
     }
+
+    static createKeyTokenHighLevel = async (userID, publicKey, privateKey, refreshToken) => {
+        try {
+            const filter = { user: userID };
+            const update = { publicKey, privateKey, refreshTokensUsed: [], refreshToken }
+            const options = { upsert: true, new: true };
+
+            const tokens = await keytokenModel.findOneAndUpdate(filter, update, options)
+            return tokens?.publicKey ?? null;
+        } catch (error) {
+            return error;
+
+        }
+    }
 }
 
 
