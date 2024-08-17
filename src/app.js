@@ -9,6 +9,8 @@ const compression = require('compression');
 //init middlewares
 const MorganFormatConfig = require('../configs/morgan');
 app.use(morgan(MorganFormatConfig.FORMAT.DEV))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 app.use(helmet())
 app.use(compression())
