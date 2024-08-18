@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const shopModel = require('../models/shop.model')
 const KeyTokenService = require('../services/keyToken.service');
 
-const createTokenPair = require('../auth/auth.utils');
+const { createTokenPair } = require('../auth/auth.utils');
 const { getIntoData } = require('../utils');
 const { BadRequestError, AuthFailureError } = require('../core/error.response');
 const { findShopByEmail } = require('./shop.service');
@@ -62,6 +62,12 @@ class AccessService {
         }
     }
 
+    static logout = async (keyStore) => {
+        const deletedKeys = KeyTokenService.removeKeyTokenByID(keyStore?._id, {
+            _id: 1, user: 1,
+        });
+        return deletedKeys;
+    }
 
     static signUp = async (data) => {
         const { name, email, password } = data;

@@ -12,6 +12,15 @@ class AccessController {
         }).send(res);
     }
 
+    logout = async (req, res, next) => {
+        const data = await AccessService.logout(req.keyStore);
+        return new OKSuccessResponse({
+            message: 'Logout successfully!',
+            code: '20000',
+            metadata: { deletedKeyToken: data },
+        }).send(res);
+    }
+
     signUp = async (req, res, next) => {
         const data = await AccessService.signUp(req.body)
         return new CreatedSuccessResponse({
