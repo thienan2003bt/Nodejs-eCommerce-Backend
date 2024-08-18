@@ -7,7 +7,7 @@ const _SELECT = {
     user: 1,
     publicKey: 1,
     refreshToken: 1,
-    refreshTokenUsed: 1,
+    refreshTokensUsed: 1,
 }
 
 class KeyTokenService {
@@ -41,11 +41,41 @@ class KeyTokenService {
 
     static findKeyTokenByUserID = async (userID, select = _SELECT) => {
         const token = await keytokenModel.findOne({ user: new Types.ObjectId(userID) }).select(select).lean();
+        console.log("KeyStore");
+        console.log(token);
+        return token;
+    }
+
+    static findKeyTokenByRefreshTokenUsed = async (refreshToken) => {
+        const token = await keytokenModel.findOne({ refreshTokensUsed: refreshToken }).lean();
+        return token;
+    }
+
+    static findKeyTokenByRefreshToken = async (refreshToken) => {
+        const token = await keytokenModel.findOne({ refreshToken }).lean();
         return token;
     }
 
     static removeKeyTokenByID = async (id, select = _SELECT) => {
         return await keytokenModel.findByIdAndDelete(id).select(select).lean();
+    }
+
+    static deleteKeyByUserID = async (userID, select = _SELECT) => {
+        return await keytokenModel.deleteOne({ user: new Types.ObjectId(userID) }).select(select).lean();
+    }
+
+    static updateRefreshToken = async (holderTokenID, tokens, refreshToken) => {
+        return await keytokenModel.updateOne(
+            { _id: holderTokenID },
+            {
+                $set: {
+                    refreshToken: tokens?.refreshToken,
+                },
+                $addToSet: {
+                    refreshTokensUsed: refreshToken,
+                }
+            }
+        )
     }
 }
 

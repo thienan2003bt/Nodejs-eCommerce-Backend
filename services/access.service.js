@@ -6,9 +6,9 @@ const crypto = require('crypto');
 const shopModel = require('../models/shop.model')
 const KeyTokenService = require('../services/keyToken.service');
 
-const { createTokenPair } = require('../auth/auth.utils');
+const { createTokenPair, verifyToken } = require('../auth/auth.utils');
 const { getIntoData } = require('../utils');
-const { BadRequestError, AuthFailureError } = require('../core/error.response');
+const { BadRequestError, AuthFailureError, ForbiddenError } = require('../core/error.response');
 const { findShopByEmail } = require('./shop.service');
 
 const SHOP_ROLES = {
@@ -122,6 +122,53 @@ class AccessService {
         return {
             code: 200,
             metadata: null
+        }
+    }
+
+    /* !!! HANDLE USER REFRESH TOKEN GUIDELINE !!!
+    1 - Check if refresh token is used
+    2 - Decode the existing refresh token if any
+    3 - Delete all tokens related to the refresh token in DBs
+    4 - Check if holder refresh token (currently used refresh token) is existing
+    5 - Verify the holder refresh token and check if user decoded from it is existing
+    6 - Update key token with new access token
+    7 - Return the new access token with user info after all
+    */
+    static handleRefreshToken = async (refreshToken) => {
+        // Step 1
+        const existingToken = await KeyTokenService.findKeyTokenByRefreshTokenUsed(refreshToken);
+
+        // Step 2
+        if (existingToken) {
+            console.log("existingToken: ");
+            console.log(existingToken);
+            const { userID, email } = verifyToken(refreshToken, existingToken?.publicKey ?? '');
+
+            // Step 3
+            await KeyTokenService.deleteKeyByUserID(userID)
+            throw new ForbiddenError('Something went wrong, please login again!')
+        }
+
+        // Step 4
+        console.log("Find holder token ...");
+        const holderToken = await KeyTokenService.findKeyTokenByRefreshToken(refreshToken);
+        if (!holderToken) throw new AuthFailureError('Shop is not registered')
+
+        // Step 5
+        console.log("Verify holder token ...");
+        const { userID, email } = verifyToken(refreshToken, holderToken?.publicKey ?? '');
+        const existingShop = await findShopByEmail({ email })
+        if (!existingShop) throw new AuthFailureError('Shop is not registered')
+
+        // Step 6
+        const tokens = await createTokenPair({ userID, email }, holderToken?.publicKey, holderToken?.privateKey ?? '');
+
+        await KeyTokenService.updateRefreshToken(holderToken?._id, tokens, refreshToken);
+
+        // Step 7
+        return {
+            user: { userID, email },
+            tokens
         }
     }
 }

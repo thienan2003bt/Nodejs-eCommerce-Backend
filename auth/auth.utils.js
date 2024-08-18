@@ -59,6 +59,7 @@ const authentication = aSyncHandler(async (req, res, next) => {
     const userID = req.headers[_HEADER.CLIENT_ID];
     if (!userID) throw new AuthFailureError('Invalid request!');
 
+    console.log("$$ User ID: " + userID);
     // Step 2
     const keyStore = await KeyTokenService.findKeyTokenByUserID(userID);
     if (!keyStore) throw new NotFoundError('KeyStore not found!');
@@ -85,4 +86,5 @@ const authentication = aSyncHandler(async (req, res, next) => {
 module.exports = {
     createTokenPair,
     authentication,
+    verifyToken,
 }

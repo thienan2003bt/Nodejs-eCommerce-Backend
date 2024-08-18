@@ -12,10 +12,14 @@ router.use(permissions('0000'))
 
 
 router.post('/shop/login', aSyncHandler(accessController.login))
-router.post('/shop/logout', authentication, aSyncHandler(accessController.logout))
 router.post('/shop/signup', aSyncHandler(accessController.signUp))
 
 
+// Check authentication
+router.use(authentication)
+
+router.post('/shop/logout', aSyncHandler(accessController.logout))
+router.post('/shop/refresh-token', aSyncHandler(accessController.handleRefreshToken))
 
 
 
