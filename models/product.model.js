@@ -50,6 +50,10 @@ const clothingSchema = new Schema({
         type: String,
         required: true,
     },
+    product_shop: {
+        type: Schema.Types.ObjectId,
+        ref: 'Shop',
+    },
     size: String,
     material: String,
 }, {
@@ -63,6 +67,10 @@ const electronicSchema = new Schema({
     manufacturer: {
         type: String,
         required: true,
+    },
+    product_shop: {
+        type: Schema.Types.ObjectId,
+        ref: 'Shop',
     },
     model: String,
     color: String,

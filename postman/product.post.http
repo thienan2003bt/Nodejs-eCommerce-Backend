@@ -1,6 +1,7 @@
 @url_dev = http://localhost:3055/v1/api
 
 ### create
+#Mock data in /mock 
 POST {{url_dev}}/product
 Content-Type: application/json
 x-api-key: 29d1c2cbe33c35869c494e2943a282f4e5705a60f952f01788927146dfcc96d5c2c6dcb4bff7bbe5b858da92126110383bec525edc61066d3be98908ca1e68af

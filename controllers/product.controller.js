@@ -4,7 +4,10 @@ const { OKSuccessResponse } = require('../core/success.response')
 
 class ProductController {
     static createProduct = async (req, res, next) => {
-        const data = await ProductService.createProduct(req.body?.product_type ?? '', req.body);
+        const data = await ProductService.createProduct(req.body?.product_type ?? '', {
+            ...req.body,
+            product_shop: req.user?.userID,
+        });
         return new OKSuccessResponse({
             message: 'Product created successfully!',
             code: 201,

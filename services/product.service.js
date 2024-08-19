@@ -27,10 +27,13 @@ class Product {
     }
 
 
-    async createProduct() {
+    async createProduct(productID) {
         console.log("Creating product with payload: ");
         console.log(this);
-        return await product.create(this);
+        return await product.create({
+            ...this,
+            _id: productID
+        });
     }
 }
 
@@ -43,10 +46,13 @@ class Clothing extends Product {
     async createProduct() {
         console.log("~~~Clothing attributes: ");
         console.log(this.product_attributes);
-        const newClothing = await clothing.create(this?.product_attributes);
+        const newClothing = await clothing.create({
+            ...this?.product_attributes,
+            product_shop: this?.product_shop
+        });
         if (!newClothing) throw new BadRequestError('Something went wrong creating new Clothing product!')
 
-        const newProduct = await super.createProduct();
+        const newProduct = await super.createProduct(newClothing?._id);
         if (!newClothing) throw new BadRequestError('Something went wrong creating new product!')
 
         return newProduct;
@@ -59,10 +65,13 @@ class Electronic extends Product {
     }
 
     async createProduct() {
-        const newElectronic = await electronic.create(this?.product_attributes);
+        const newElectronic = await electronic.create({
+            ...this?.product_attributes,
+            product_shop: this?.product_shop
+        });
         if (!newElectronic) throw new BadRequestError('Something went wrong creating new Electronic product!')
 
-        const newProduct = await super.createProduct();
+        const newProduct = await super.createProduct(newElectronic?._id);
         if (!newElectronic) throw new BadRequestError('Something went wrong creating new product!')
 
         return newProduct;

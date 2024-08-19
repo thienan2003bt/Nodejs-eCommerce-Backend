@@ -80,6 +80,7 @@ const authentication = aSyncHandler(async (req, res, next) => {
 
     // Step 6
     req.keyStore = keyStore;
+    req.user = decoded;
     return next();
 
 })
