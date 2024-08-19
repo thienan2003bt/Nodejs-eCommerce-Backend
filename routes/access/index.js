@@ -1,6 +1,6 @@
 'use strict';
 const router = require('express').Router();
-const { authentication } = require('../../auth/auth.utils');
+const { authentication, authenticationV2 } = require('../../auth/auth.utils');
 const { apiKey, permissions } = require('../../auth/checkAuth');
 
 const accessController = require('../../controllers/access.controller');
@@ -16,7 +16,7 @@ router.post('/shop/signup', aSyncHandler(accessController.signUp))
 
 
 // Check authentication
-router.use(authentication)
+router.use(authenticationV2)
 
 router.post('/shop/logout', aSyncHandler(accessController.logout))
 router.post('/shop/refresh-token', aSyncHandler(accessController.handleRefreshToken))

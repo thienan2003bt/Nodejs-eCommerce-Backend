@@ -171,6 +171,40 @@ class AccessService {
             tokens
         }
     }
+
+    /* !!! HANDLE USER REFRESH TOKEN V2 GUIDELINE !!!
+    1 - Check if refresh token is used
+    2 - Decode the existing refresh token if any
+    3 - Delete all tokens related to the refresh token in DBs
+    4 - Check if holder refresh token (currently used refresh token) is existing
+    5 - Verify the holder refresh token and check if user decoded from it is existing
+    6 - Update key token with new access token
+    7 - Return the new access token with user info after all
+    */
+    static handleRefreshTokenV2 = async ({ refreshToken, user, keyStore }) => {
+        const { userID, email } = user;
+        if (keyStore?.refreshTokensUsed?.includes(refreshToken)) {
+            await KeyTokenService.deleteKeyByUserID(userID)
+            throw new ForbiddenError('Something went wrong, please login again!')
+        }
+
+        if (keyStore?.refreshToken !== refreshToken) {
+            throw new AuthFailureError('Shop is not registered')
+        }
+
+        const existingShop = await findShopByEmail({ email })
+        if (!existingShop) throw new AuthFailureError('Shop is not registered')
+
+        // Step 6
+        const tokens = await createTokenPair({ userID, email }, keyStore?.publicKey, keyStore?.privateKey ?? '');
+        await KeyTokenService.updateRefreshToken(keyStore?._id, tokens, refreshToken);
+
+        // Step 7
+        return {
+            user,
+            tokens
+        }
+    }
 }
 
 module.exports = AccessService;
