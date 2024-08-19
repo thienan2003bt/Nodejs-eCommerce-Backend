@@ -78,6 +78,28 @@ class ProductController {
             metadata: { data }
         }).send(res);
     }
+
+    static findAllProducts = async (req, res, next) => {
+        const data = await ProductFactory.findAllProducts(req.query);
+
+        return new OKSuccessResponse({
+            message: 'Find all products successfully!',
+            code: 200,
+            metadata: { data }
+        }).send(res);
+    }
+
+    static findProduct = async (req, res, next) => {
+        const data = await ProductFactory.findProduct({
+            product_id: req.params?.id
+        });
+
+        return new OKSuccessResponse({
+            message: 'Find all products successfully!',
+            code: 200,
+            metadata: { data }
+        }).send(res);
+    }
 }
 
 module.exports = ProductController;

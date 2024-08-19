@@ -10,6 +10,8 @@ router.use(apiKey)
 router.use(permissions('0000'))
 
 // Unauthenticated routes <=> For user
+router.get('/', aSyncHandler(productController.findAllProducts))
+router.get('/:id', aSyncHandler(productController.findProduct))
 router.get('/search/:keySearch', aSyncHandler(productController.searchProductsByUser))
 
 
