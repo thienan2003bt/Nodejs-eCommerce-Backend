@@ -9,16 +9,16 @@ Authorization: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NmMxOThmNTg2
 x-client-id: 66c198f5868978415e6e1d1c
 
 {
-    "product_name": "New Jeans",
+    "product_name": "Furniture 16 64GB",
     "product_thumb": "product_thumb",
-    "product_description": "High-quality denim jeans",
-    "product_price": 50,
-    "product_quantity": 5,
-    "product_type": "Clothing",
+    "product_description": "New TTF Product",
+    "product_price": 500,
+    "product_quantity": 23,
+    "product_type": "Furniture",
     "product_shop": "66c198f5868978415e6e1d1c",
     "product_attributes": {
-        "brand": "Levi s",
-        "size": "L",
-        "material": "Denim"
+        "manufacturer": "TTF",
+        "size": "15",
+        "material": "Gold"
     }
 }
