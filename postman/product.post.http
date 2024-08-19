@@ -9,16 +9,16 @@ Authorization: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NmMxOThmNTg2
 x-client-id: 66c198f5868978415e6e1d1c
 
 {
-    "product_name": "Furniture 16 64GB",
+    "product_name": "IPhone 14 64GB",
     "product_thumb": "product_thumb",
-    "product_description": "New TTF Product",
+    "product_description": "New Apple Product",
     "product_price": 500,
-    "product_quantity": 23,
-    "product_type": "Furniture",
+    "product_quantity": 5,
+    "product_type": "Electronic",
     "product_shop": "66c198f5868978415e6e1d1c",
     "product_attributes": {
-        "manufacturer": "TTF",
-        "size": "15",
-        "material": "Gold"
+        "manufacturer": "Apple",
+        "model": "IPhone 14",
+        "color": "Gold"
     }
 }
