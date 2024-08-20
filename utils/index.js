@@ -47,7 +47,7 @@ const updateNestedObject = (obj) => {
 }
 
 const convertToObjectIdMongoose = (id) => {
-    return Types.ObjectId(id);
+    return new Types.ObjectId(id);
 }
 
 

@@ -1,6 +1,10 @@
 'use strict';
 const Utils = require('../../utils/index');;
 
+const findExistingDiscount = async ({ model, filter }) => {
+    return await model.findOne(filter).lean()
+}
+
 const findAllDiscountsCodeUnSelect = async ({ limit = 50, page = 1, sort = 'ctime', filter, unSelect = [], model }) => {
     const skip = (+page - 1) * +limit;
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 };
@@ -28,6 +32,7 @@ const findAllDiscountsCodeSelect = async ({ limit = 50, page = 1, sort = 'ctime'
 }
 
 module.exports = {
+    findExistingDiscount,
     findAllDiscountsCodeSelect,
     findAllDiscountsCodeUnSelect,
 }
