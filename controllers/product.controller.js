@@ -41,7 +41,7 @@ class ProductController {
         }).send(res);
     }
 
-    // QUERY
+    // GET
     static getAllDraftsForShop = async (req, res, next) => {
         const data = await ProductFactory.findAllDraftsForShop({
             product_shop: req.user?.userID
@@ -96,6 +96,23 @@ class ProductController {
 
         return new OKSuccessResponse({
             message: 'Find all products successfully!',
+            code: 200,
+            metadata: { data }
+        }).send(res);
+    }
+
+
+    // PATCH
+    static updateProduct = async (req, res, next) => {
+        const data = await ProductFactory.updateProduct({
+            type: req.body?.product_type,
+            product_id: req.params?.id,
+            payload: req.body
+            // product_shop: req.user?.userID,
+        });
+
+        return new OKSuccessResponse({
+            message: 'Update product successfully!',
             code: 200,
             metadata: { data }
         }).send(res);

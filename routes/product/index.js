@@ -27,4 +27,6 @@ router.post('/', aSyncHandler(productController.createProduct))
 router.post('/publish/:id', aSyncHandler(productController.publishProduct))
 router.post('/unpublish/:id', aSyncHandler(productController.unPublishProduct))
 
+// PATCH
+router.patch('/:id', aSyncHandler(productController.updateProduct));
 module.exports = router;

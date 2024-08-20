@@ -1,6 +1,6 @@
 'use strict';
 const { product } = require('../models/product.model');
-
+const ProductRepository = require('../models/repositories/product.repo');
 
 class Product {
     constructor({ product_name, product_thumb, product_description, product_price, product_quantity, product_type, product_shop, product_attributes }) {
@@ -20,6 +20,10 @@ class Product {
             ...this,
             _id: productID
         });
+    }
+
+    async updateProduct(product_id, payload) {
+        return await ProductRepository.updateProductByID(product_id, payload, product)
     }
 }
 

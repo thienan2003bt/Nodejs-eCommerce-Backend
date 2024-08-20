@@ -20,13 +20,15 @@ class ProductFactory {
         return new productClass(payload).createProduct();
     }
 
-    static updateProduct = async (type, payload) => {
+    static async updateProduct({ type, product_id, payload, product_shop }) {
+        // TODO: check the authorization of shop owner on that product
+
         const productClass = ProductFactory.productRegistry[type];
         if (!productClass) {
             throw new BadRequestError('Invalid product type!')
         }
 
-        return new productClass(payload).updateProduct();
+        return new productClass(payload).updateProduct(product_id);
     }
 
     static publishProductByShop = async ({ product_shop, product_id }) => {
