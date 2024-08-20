@@ -39,7 +39,7 @@ class Clothing extends Product {
             await ProductRepository.updateProductByID(
                 product_id,
                 Utils.updateNestedObject(objParams?.product_attributes),
-                furniture
+                clothing
             )
         }
 
