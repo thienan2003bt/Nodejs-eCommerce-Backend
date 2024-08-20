@@ -1,3 +1,4 @@
 node_modules
 postman/apikey.post.http
 .env
+mock

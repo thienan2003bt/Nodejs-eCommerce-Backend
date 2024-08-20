@@ -4,8 +4,8 @@
 const router = require('express').Router();
 
 
+router.use('/v1/api/product', require('./product/index'));
 router.use('/v1/api', require('./access/index'));
-
 router.use('/apikey', require('./apikey/index'));
 
 router.get('/', (req, res) => {

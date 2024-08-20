@@ -41,8 +41,6 @@ class KeyTokenService {
 
     static findKeyTokenByUserID = async (userID, select = _SELECT) => {
         const token = await keytokenModel.findOne({ user: new Types.ObjectId(userID) }).select(select).lean();
-        console.log("KeyStore");
-        console.log(token);
         return token;
     }
 

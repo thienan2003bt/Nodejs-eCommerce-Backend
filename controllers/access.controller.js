@@ -35,7 +35,11 @@ class AccessController {
 
 
     handleRefreshToken = async (req, res, next) => {
-        const data = await AccessService.handleRefreshToken(req.body?.refreshToken)
+        const data = await AccessService.handleRefreshTokenV2({
+            refreshToken: req.refreshToken,
+            user: req.user,
+            keyStore: req.keyStore,
+        })
         return new OKSuccessResponse({
             message: 'Sign up successfully!',
             code: '20001',
