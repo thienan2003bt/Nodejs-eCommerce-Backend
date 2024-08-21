@@ -41,23 +41,32 @@ class CartService {
 
     static async updateUserCartQuantity({ userID, product }) {
         const { productID, quantity } = product;
+        console.log(`product id ${productID}; quantity ${quantity}`);
         const query = {
             cart_userID: userID,
-            'cart_products.productID': new Types.ObjectId(productID),
+            "cart_products.productID": new Types.ObjectId(productID),
             cart_state: 'active'
         }
         const updateSet = {
-            $inc: { "cart_products.$.quantity": quantity }
+            $inc: { "cart_products.$.quantity": +quantity }
         }
-        const options = { upsert: true, new: true }
+        const options = { upsert: true, new: true };
         return await cartModel.findOneAndUpdate(query, updateSet, options)
 
+    }
+
+    static async addNewProductToUSerCart({ userID, product }) {
+        return await cartModel.updateOne(
+            { cart_userID: userID, cart_state: 'active' },
+            { $push: { cart_products: product }, $inc: { cart_count_product: 1 } },
+            { upsert: true, new: true });
     }
 
     /* ADD TO CART GUIDELINE
     1 - If user's cart is not yet existed, create a new one
     2 - If user's cart is already existed but is empty
-    3 - The user's cart is already existed and its product count > 0
+    3 - Check if user's cart does not have that product
+    4 - The user's cart is already existed and its product count > 0
     */
     static async addToCart({ userID, product = {} }) {
         // Step 1
@@ -78,7 +87,13 @@ class CartService {
         }
 
         // Step 3
-        return await CartService.updateUserCartQuantity({ userID, normalizedProduct })
+        const existingProductInCart = userCart?.cart_products.find(cartProduct => cartProduct?.productID?.toString() === product?.productID);
+        if (!existingProductInCart) {
+            return await CartService.addNewProductToUSerCart({ userID, product: normalizedProduct });
+        }
+
+        // Step 4
+        return await CartService.updateUserCartQuantity({ userID, product: normalizedProduct })
     }
 
 
@@ -116,10 +131,9 @@ class CartService {
         const query = { cart_userID: userID, cart_state: 'active' }
         const updateSet = {
             $pull: {
-                cart_products: {
-                    productID: new Types.ObjectId(productID),
-                }
-            }
+                cart_products: { productID: new Types.ObjectId(productID) }
+            },
+            $inc: { cart_count_product: -1 }
         }
 
         console.log("userID: " + userID);
