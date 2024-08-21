@@ -1,6 +1,9 @@
 'use strict';
 
 const cartModel = require('../models/cart.model');
+const ProductRepository = require('../models/repositories/product.repo');
+const { NotFoundError, BadRequestError } = require('../core/error.response');
+const { Types } = require('mongoose');
 
 /* Key features
 - Add products to cart [user]
@@ -12,14 +15,24 @@ const cartModel = require('../models/cart.model');
 */
 
 class CartService {
+    static normalizeProductCart(product) {
+        const newProduct = {
+            ...product,
+            productID: new Types.ObjectId(product?.productID ?? ''),
+            shopID: new Types.ObjectId(product?.shopID ?? ''),
+        }
+        return newProduct;
+    }
+
     static async createUserCart({ userID, product }) {
         const query = {
             cart_userID: userID,
             cart_state: 'active'
         }
+        const normalizedProduct = CartService.normalizeProductCart(product)
         const updateOrInsert = {
             $addToSet: {
-                cart_products: product
+                cart_products: normalizedProduct
             }
         }
         const options = { upsert: true, new: true }
@@ -30,11 +43,11 @@ class CartService {
         const { productID, quantity } = product;
         const query = {
             cart_userID: userID,
-            'cart_products.productID': productID,
+            'cart_products.productID': new Types.ObjectId(productID),
             cart_state: 'active'
         }
         const updateSet = {
-            $inc: { "cart_product.$.quantity": quantity }
+            $inc: { "cart_products.$.quantity": quantity }
         }
         const options = { upsert: true, new: true }
         return await cartModel.findOneAndUpdate(query, updateSet, options)
@@ -53,17 +66,77 @@ class CartService {
             return await CartService.createUserCart({ userID, product })
         }
 
+        const normalizedProduct = CartService.normalizeProductCart(product);
+
         // Step 2
         if (userCart?.cart_count_product === 0) {
             userCart = await cartModel.updateOne({ cart_userID: userID }, {
-                cart_products: [product],
+                cart_products: [normalizedProduct],
                 cart_count_product: 1
             })
+            return userCart;
         }
 
         // Step 3
-        return await CartService.updateUserCartQuantity({ userID, product })
+        return await CartService.updateUserCartQuantity({ userID, normalizedProduct })
     }
 
 
+    /* UPDATE CART GUIDELINE
+    1- 
+    */
+    static async addToCartV2({ userID, shop_order_ids = {} }) {
+        const { productID, quantity, old_quantity } = shop_order_ids[0]?.item_products[0];
+
+        const existingProduct = await ProductRepository.getProductByID(productID);
+        if (!existingProduct) {
+            throw new NotFoundError('Invalid product!')
+        }
+
+        if (existingProduct?.product_shop?.toString() !== shop_order_ids[0]?.shopID) {
+            throw new NotFoundError('Product does not belong to the shop!')
+        }
+
+        if (quantity === 0) {
+            //TODO: Delete item from the cart
+            return await CartService.deleteUserCartItem({ userID, productID })
+        }
+
+        return await CartService.updateUserCartQuantity({
+            userID,
+            product: {
+                productID: new Types.ObjectId(productID),
+                quantity: +quantity - +old_quantity
+            }
+        })
+    }
+
+
+    static async deleteUserCartItem({ userID, productID }) {
+        const query = { cart_userID: userID, cart_state: 'active' }
+        const updateSet = {
+            $pull: {
+                cart_products: {
+                    productID: new Types.ObjectId(productID),
+                }
+            }
+        }
+
+        console.log("userID: " + userID);
+        console.log("productID: " + productID);
+        const deletedCart = await cartModel.updateOne(query, updateSet)
+        return deletedCart;
+    }
+
+    static async getListUserCart({ userID, limit = 50, page = 1 }) {
+        const skip = (+page - 1) * +limit;
+        const userCart = await cartModel.findOne({ cart_userID: userID })
+            .skip(skip)
+            .limit(+limit)
+            .lean();
+
+        return userCart;
+    }
 }
+
+module.exports = CartService;

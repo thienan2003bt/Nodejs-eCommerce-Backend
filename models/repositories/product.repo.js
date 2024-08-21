@@ -52,7 +52,9 @@ const findProduct = async (product_id, unSelect) => {
     return await product.findById(product_id).select(refuseSelectedData(unSelect));
 }
 
-
+const getProductByID = async (productID) => {
+    return await product.findById(productID).lean();
+}
 
 
 
@@ -119,4 +121,5 @@ module.exports = {
     findAllProducts,
     findProduct,
     updateProductByID,
+    getProductByID,
 }
