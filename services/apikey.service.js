@@ -22,7 +22,6 @@ const generateApiKey = async ({ admin_permission }) => {
 }
 
 const findByID = async (key) => {
-    generatePublicApiKey();
     try {
         const objKey = await apikeyModel.findOne({
             key,

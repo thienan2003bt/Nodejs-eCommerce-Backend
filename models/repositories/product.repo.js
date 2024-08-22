@@ -52,7 +52,9 @@ const findProduct = async (product_id, unSelect) => {
     return await product.findById(product_id).select(refuseSelectedData(unSelect));
 }
 
-
+const getProductByID = async (productID) => {
+    return await product.findById(productID).lean();
+}
 
 
 
@@ -107,7 +109,20 @@ const updateProductByID = async (product_id, payload, model, isNew = true) => {
     return await model?.findByIdAndUpdate(product_id, payload, { new: isNew })
 }
 
-
+const checkProductByServer = async (products) => {
+    const result = await Promise.all(
+        products.map(async (product) => {
+            const existingProduct = await getProductByID(product?.productID);
+            if (existingProduct) {
+                return {
+                    price: existingProduct?.product_price,
+                    productID: existingProduct?._id,
+                }
+            }
+        }
+        ));
+    return result;
+}
 
 
 module.exports = {
@@ -119,4 +134,6 @@ module.exports = {
     findAllProducts,
     findProduct,
     updateProductByID,
+    getProductByID,
+    checkProductByServer,
 }

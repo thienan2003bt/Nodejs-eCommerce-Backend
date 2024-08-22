@@ -1,7 +1,7 @@
 'use strict';
 const { product } = require('../models/product.model');
 const ProductRepository = require('../models/repositories/product.repo');
-
+const InventoryRepository = require('../models/repositories/inventory.repo');
 class Product {
     constructor({ product_name, product_thumb, product_description, product_price, product_quantity, product_type, product_shop, product_attributes }) {
         this.product_name = product_name;
@@ -16,10 +16,20 @@ class Product {
 
 
     async createProduct(productID) {
-        return await product.create({
+        const newProduct = await product.create({
             ...this,
             _id: productID
         });
+
+        if (newProduct) {
+            await InventoryRepository.insertInventory({
+                product_id: newProduct?._id,
+                shop_id: this.product_shop,
+                stock: this?.product_quantity
+            })
+        }
+
+        return newProduct
     }
 
     async updateProduct(product_id, payload) {
