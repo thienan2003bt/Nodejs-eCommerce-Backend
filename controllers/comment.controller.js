@@ -17,7 +17,16 @@ class CommentController {
         const data = await CommentService.getCommentsByParentID(req.query);
         return new OKSuccessResponse({
             message: 'get comments by parent id successfully!',
-            code: 201,
+            code: 200,
+            metadata: { data },
+        }).send(res);
+    }
+
+    async deleteComment(req, res, next) {
+        const data = await CommentService.deleteComment(req.body);
+        return new OKSuccessResponse({
+            message: 'delete comments successfully!',
+            code: 200,
             metadata: { data },
         }).send(res);
     }

@@ -2,6 +2,7 @@
 
 const { NotFoundError } = require('../core/error.response');
 const commentModel = require('../models/comment.model');
+const ProductRepository = require('../models/repositories/product.repo');
 const Utils = require('../utils/index');
 
 class CommentService {
@@ -77,6 +78,40 @@ class CommentService {
             .sort({ comment_left: 1 }).skip(skip).limit(limit)
 
         return comments;
+    }
+
+
+    static async deleteComment({ commentID, productID }) {
+        const existingProduct = await ProductRepository.findProduct(productID, ['__v']);
+        if (!existingProduct) {
+            throw new NotFoundError('Product not found!');
+        }
+        const existingComment = await commentModel.findById(commentID)
+        const leftValue = +existingComment.comment_left;
+        const rightValue = +existingComment.comment_right;
+
+        const width = rightValue - leftValue + 1;
+        await commentModel.deleteMany(
+            {
+                comment_productID: Utils.convertToObjectIdMongoose(productID),
+                comment_left: { $gte: leftValue, $lte: rightValue }
+            }
+        )
+
+        await commentModel.updateMany(
+            {
+                comment_productID: Utils.convertToObjectIdMongoose(productID),
+                comment_right: { $gt: rightValue }
+            },
+            { $inc: { comment_right: -width } }
+        )
+        await commentModel.updateMany(
+            {
+                comment_productID: Utils.convertToObjectIdMongoose(productID),
+                comment_left: { $gt: rightValue }
+            },
+            { $inc: { comment_left: -width } }
+        )
     }
 }
 
