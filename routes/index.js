@@ -1,7 +1,10 @@
 'use strict';
-
-
 const router = require('express').Router();
+
+const { pushToLogDiscord } = require('../middlewares/index');
+
+// Logger bot
+router.use(pushToLogDiscord);
 
 
 router.use('/v1/api/discount', require('./discount/index'));
