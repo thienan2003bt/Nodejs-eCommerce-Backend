@@ -6,7 +6,7 @@ const pushToLogDiscord = async (req, res, next) => {
     try {
         Logger.sentToFormatCode({
             title: `Method: ${req.method}`,
-            code: req.method === 'GET' ? req.query : req.body,
+            code: req.method === 'GET' ? req.query : (req.body ?? req.files),
             message: `${req.get('host')}${req.originalUrl}`
         });
         return next();
