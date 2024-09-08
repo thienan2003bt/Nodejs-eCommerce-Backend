@@ -31,6 +31,27 @@ class UploadService {
             thumb_url: thumb
         };
     }
+
+    static async uploadMultiImagesFromLocal(files, folderName = 'product/8049') {
+        if (!files.length) return;
+        const uploads = [];
+
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: folderName
+            })
+            const thumb = cloudinary.url(result.public_id, {
+                height: 100, width: 100, format: 'jpg'
+            });
+            uploads.push({
+                img_url: result.secure_url,
+                shopID: 8049,
+                thumb_url: thumb
+            });
+        }
+
+        return uploads;
+    }
 }
 
 

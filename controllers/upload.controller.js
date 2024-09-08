@@ -23,6 +23,17 @@ class UploadController {
             metadata: { data }
         }).send(res);
     }
+
+    async uploadMultiFilesThumb(req, res, next) {
+        const { files } = req;
+        if (!files || !files.length) throw new BadRequestError('File required!')
+        const data = await UploadService.uploadMultiImagesFromLocal(files)
+        return new OKSuccessResponse({
+            message: 'New files uploaded successfully!',
+            code: 200,
+            metadata: { data }
+        }).send(res);
+    }
 }
 
 module.exports = new UploadController();
