@@ -2,10 +2,12 @@
 const crypto = require("crypto");
 const Utils = require("../utils/index");
 
+require("dotenv").config();
 const cloudinary = require('../configs/config.cloudinary');
 
 const { s3, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("../configs/config.s3");
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+// const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const { getSignedUrl } = require('@aws-sdk/cloudfront-signer')
 
 
 class UploadService {
@@ -71,15 +73,22 @@ class UploadService {
             ContentType: 'image/jpeg',
         });
 
-        const signedUrlCommand = new GetObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: uploadedFileName,
+        // const signedUrlCommand = new GetObjectCommand({
+        //     Bucket: process.env.AWS_BUCKET_NAME,
+        //     Key: uploadedFileName,
+        // });
+        // const url = await getSignedUrl(s3, signedUrlCommand, { expiresIn: 3600 });
+
+        const url = getSignedUrl({
+            url: `${process.env.AWS_URL_IMAGE_PUBLIC}/${uploadedFileName}`,
+            dateLessThan: new Date(Date.now() + 3600 * 60),
+            keyPairId: process.env.AWS_PUBLIC_KEY_ID,
+            privateKey: process.env.AWS_BUCKET_PRIVATE_KEY_ID
         });
-        const url = await getSignedUrl(s3, signedUrlCommand, { expiresIn: 3600 });
 
         const result = await s3.send(putFileCommand);
         return {
-            ...result?.$metadata,
+            result: { ...result?.$metadata },
             url: url,
         };
     }
