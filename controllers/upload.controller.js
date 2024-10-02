@@ -43,7 +43,7 @@ class UploadController {
         return new OKSuccessResponse({
             message: 'New file uploaded to S3 successfully!',
             code: 200,
-            metadata: data?.$metadata ?? data,
+            metadata: data,
         }).send(res);
     }
 }

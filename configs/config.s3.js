@@ -1,6 +1,6 @@
 'use strict';
 
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
 
 const config = {
@@ -15,4 +15,6 @@ const s3 = new S3Client(config);
 module.exports = { 
     s3,
     PutObjectCommand,
+    GetObjectCommand,
+    DeleteObjectCommand,
 };

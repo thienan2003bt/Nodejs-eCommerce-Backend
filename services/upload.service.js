@@ -1,8 +1,11 @@
 'use strict';
-const cloudinary = require('../configs/config.cloudinary');
-const { s3, PutObjectCommand } = require("../configs/config.s3");
 const crypto = require("crypto");
 const Utils = require("../utils/index");
+
+const cloudinary = require('../configs/config.cloudinary');
+
+const { s3, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("../configs/config.s3");
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 
 class UploadService {
@@ -60,15 +63,25 @@ class UploadService {
 
     // S3
     static async uploadImageFromLocalToS3(file) {
-        const command = new PutObjectCommand({
+        const uploadedFileName = Utils.generateRandomName();
+        const putFileCommand = new PutObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: Utils.generateRandomName(),
+            Key: uploadedFileName,
             Body: file.buffer,
             ContentType: 'image/jpeg',
         });
 
-        const result = await s3.send(command);
-        return result;
+        const signedUrlCommand = new GetObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: uploadedFileName,
+        });
+        const url = await getSignedUrl(s3, signedUrlCommand, { expiresIn: 3600 });
+
+        const result = await s3.send(putFileCommand);
+        return {
+            ...result?.$metadata,
+            url: url,
+        };
     }
 }
 
