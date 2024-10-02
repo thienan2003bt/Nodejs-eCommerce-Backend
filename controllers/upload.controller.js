@@ -34,6 +34,18 @@ class UploadController {
             metadata: { data }
         }).send(res);
     }
+
+    // S3
+    async uploadFileThumbS3(req, res, next) {
+        const { file } = req;
+        if (!file) throw new BadRequestError('File required!')
+        const data = await UploadService.uploadImageFromLocalToS3(file)
+        return new OKSuccessResponse({
+            message: 'New file uploaded to S3 successfully!',
+            code: 200,
+            metadata: data?.$metadata ?? data,
+        }).send(res);
+    }
 }
 
 module.exports = new UploadController();

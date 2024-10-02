@@ -1,5 +1,9 @@
 'use strict';
 const cloudinary = require('../configs/config.cloudinary');
+const { s3, PutObjectCommand } = require("../configs/config.s3");
+const crypto = require("crypto");
+const Utils = require("../utils/index");
+
 
 class UploadService {
     static async uploadImageFromURL() {
@@ -51,6 +55,20 @@ class UploadService {
         }
 
         return uploads;
+    }
+
+
+    // S3
+    static async uploadImageFromLocalToS3(file) {
+        const command = new PutObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: Utils.generateRandomName(),
+            Body: file.buffer,
+            ContentType: 'image/jpeg',
+        });
+
+        const result = await s3.send(command);
+        return result;
     }
 }
 
