@@ -8,6 +8,7 @@ router.use(pushToLogDiscord);
 
 
 router.use('/v1/api/discount', require('./discount/index'));
+router.use('/v1/api/profile', require('./profile/index'));
 router.use('/v1/api/notification', require('./notification/index'));
 router.use('/v1/api/inventory', require('./inventory/index'));
 router.use('/v1/api/comment', require('./comment/index'));
