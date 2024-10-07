@@ -12,7 +12,7 @@ const roleSchema = new mongoose.Schema({
     role_status: {type: String, default: 'INACTIVE', enum: ['INACTIVE', 'ACTIVE', 'BLOCKED']},
     role_description: {type: String, default: ''},
     role_grants: [{
-        resources: {type: mongoose.Types.ObjectId, ref: "Resource", required: true},
+        resource: {type: mongoose.Types.ObjectId, ref: "Resource", required: true},
         actions: [ {type: String, required: true} ],
         attributes: {type: String, default: ''}
     }],
